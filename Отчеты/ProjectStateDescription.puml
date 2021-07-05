@@ -1,0 +1,18 @@
+@startuml 
+skinparam monochrome true
+skinparam backgroundColor #EEEEEE
+hide empty description
+title Project state description\n
+
+[*] --> Boot : open app
+Boot --> Working_app : Regular boot
+Boot --> Working_app : File input boot
+Working_app --> Working_app : step forward/back/to_the_end
+Working_app --> Working_app : restart on new data
+Working_app --> Adding_data 
+Adding_data --> Working_app
+Adding_data : adding data command
+
+Working_app --> [*] : close app
+
+@enduml
