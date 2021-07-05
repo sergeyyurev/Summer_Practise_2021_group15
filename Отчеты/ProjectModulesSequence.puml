@@ -1,0 +1,15 @@
+@startuml 
+skinparam monochrome true
+skinparam backgroundColor #EEEEEE
+
+title Project modules sequence\n
+
+App -> Drawer : user action
+Drawer -> AlgHandler : method call (do this task)
+AlgHandler --> AlgState : creating new state based on old one \n and called method
+AlgState --> AlgHandler : now the state has changed
+AlgHandler -> Drawer : update() call, provide new data
+Drawer -> App : Create new image, logs, etc
+
+
+@enduml
