@@ -1,0 +1,71 @@
+@startuml 
+skinparam monochrome true
+skinparam backgroundColor #EEEEEE
+title Project modules description\n
+
+object App
+App : The window showed to user
+
+class Drawer
+Drawer : Creates window based on AlgState data \nand interprets user input to AlgHandler methods\n
+
+class AlgHandler
+AlgHandler : Handles algorithm and data
+
+AlgHandler : AlgState[] history
+
+AlgHandler : doStep()
+AlgHandler : doStepBack()
+AlgHandler : doStepToEnd()
+
+class AlgState
+AlgState : Single state of the algorithm \nCan be used as memory unit\n
+AlgState : Can't be changed\n
+AlgState : GraphOriented graphOriented
+AlgState : GraphOriented graphOrientedReversed
+AlgState : Vector stack
+AlgState : Dict usedNodes
+
+AlgState : getNodesList()
+AlgState : getEdgesList()
+AlgState : getUsedNodesList()
+AlgState : getCurrentNode()
+
+class Ordinator
+Ordinator : Memento pattern class
+Ordinator : save()
+Ordinator : restore(algState)
+
+
+class GraphOriented
+GraphOriented : regular oriented graph\n
+GraphOriented : jeneric based\n
+
+GraphOriented : nodes
+
+GraphOriented : addEdge()
+GraphOriented : addNode()
+GraphOriented : giveNodesChildren()
+GraphOriented : giveNode()
+
+abstract class Observable
+Observable : Observer pattern class\nJava-implemented
+Observable : update()
+abstract class Observer
+Observer : Observer pattern class\nJava-implemented
+
+Observer -|> Drawer
+Observable -|> AlgHandler
+
+
+App +-- Drawer : Window created by Drawer
+Drawer --> AlgHandler
+Drawer --> AlgState
+AlgHandler ..> Drawer : update()
+AlgHandler --* AlgState
+AlgState --> GraphOriented
+AlgState <.right. Ordinator
+
+
+
+@enduml
