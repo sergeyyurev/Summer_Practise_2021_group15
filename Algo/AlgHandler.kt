@@ -79,6 +79,11 @@ class AlgHandler<T>(private var currentStage : CurrentStage = CurrentStage.INITI
         {
             CurrentStage.INITIALISATION -> 
             {
+                if (graph.nodes.size == 0)
+                {
+                    currentStage = CurrentStage.COMPLETED
+                    return
+                }
                 nodesOrder = graph.nodes.toList()
                 searchStack.add(nodesOrder[0])
                 handeledNodes.clear()
