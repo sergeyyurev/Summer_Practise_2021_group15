@@ -1,6 +1,9 @@
 @startuml 
 skinparam monochrome true
 skinparam backgroundColor #EEEEEE
+
+hide empty description
+
 title Project modules description\n
 
 object App
@@ -46,23 +49,50 @@ GraphOriented : addEdge()
 GraphOriented : inversed() : GraphOriented
 
 
-
-abstract class Observable
-Observable : Observer pattern class\nJava-implemented
-Observable : update()
-abstract class Observer
-Observer : Observer pattern class\nJava-implemented
-
-Observer <|- Drawer
-Observable <|- AlgHandler
-
-
 App -- Drawer : Window created by Drawer
 Drawer <-- AlgHandler
 Drawer <-- AlgState
-AlgHandler ..> Drawer : update()
-AlgHandler *-- AlgState
+AlgHandler <-- AlgState
 AlgState <-- GraphOriented
+
+/' Dima's part '/
+
+abstract class DisplayCreationStrategy
+class InputDisplayCreation
+class WorkingDisplayCreation
+
+class DiscargeListener
+class FikInputList
+class StopListener
+class VertexRemoveListener
+class SortListener
+class StartListener
+class VertexInsertListener
+
+abstract class DrawerButtonAction
+abstract class DrawerMouseAction
+
+Drawer <-- DisplayCreationStrategy
+DisplayCreationStrategy <.. InputDisplayCreation
+DisplayCreationStrategy <.. WorkingDisplayCreation
+
+WorkingDisplayCreation -- StopListener
+
+InputDisplayCreation -- DiscargeListener
+InputDisplayCreation -- FikInputList
+InputDisplayCreation -- VertexRemoveListener
+InputDisplayCreation -- SortListener
+InputDisplayCreation -- StartListener
+InputDisplayCreation -- VertexInsertListener
+
+DrawerButtonAction <.. DiscargeListener
+DrawerButtonAction <.. SortListener
+DrawerButtonAction <.. StartListener
+DrawerButtonAction <.. FikInputList
+DrawerButtonAction <.. StopListener
+
+DrawerMouseAction <.. VertexRemoveListener
+DrawerMouseAction <.. VertexInsertListener
 
 
 

@@ -63,7 +63,7 @@ class AlgHandler<T>(private var currentStage : CurrentStage = CurrentStage.INITI
         val connectComponentsStr = this.connectComponentsToString()
 
         res += "currentStage is $currentStageStr\n"
-        // res += "graph is $graphStr\n"
+        res += "graph is $graphStr\n"
         res += "searchStack is $searchStackStr\n"
         res += "handeledNodes is $handeledNodesStr\n"
         res += "nodesOrder is $nodesOrderStr\n"
@@ -104,9 +104,7 @@ class AlgHandler<T>(private var currentStage : CurrentStage = CurrentStage.INITI
                     {
                         handeledNodes.add(currentNode)
                         if (graph.adjacencyMap[currentNode] == null)
-                        {
                             return
-                        }
                         
                         for (node in graph.adjacencyMap[currentNode]!!)
                         {
@@ -160,9 +158,8 @@ class AlgHandler<T>(private var currentStage : CurrentStage = CurrentStage.INITI
                     {
                         handeledNodes.add(currentNode)
                         if (graph.adjacencyMap[currentNode] == null)
-                        {
                             return
-                        }
+
                         for (node in graph.adjacencyMap[currentNode]!!)
                         {
                             if (!(node in handeledNodes))
