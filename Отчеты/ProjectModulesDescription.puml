@@ -12,41 +12,40 @@ Drawer : Creates window based on AlgState data \nand interprets user input to Al
 class AlgHandler
 AlgHandler : Handles algorithm and data
 
-AlgHandler : AlgState[] history
+AlgHandler : Has same atributes as AlgState
 
-AlgHandler : doStep()
+AlgHandler : doAlgStep()
 AlgHandler : doStepBack()
-AlgHandler : doStepToEnd()
+AlgHandler : doAlgToEnd()
 
 class AlgState
 AlgState : Single state of the algorithm \nCan be used as memory unit\n
 AlgState : Can't be changed\n
-AlgState : GraphOriented graphOriented
-AlgState : GraphOriented graphOrientedReversed
-AlgState : Vector stack
-AlgState : Dict usedNodes
+
+AlgState : currentStage : enum
+AlgState : graph : GraphOriented
+AlgState : searchStack : Stack
+AlgState : handeledNodes : HashSet
+AlgState : nodesOrder : List
+AlgState : connectComponents : List<List<T>> 
 
 AlgState : getNodesList()
 AlgState : getEdgesList()
 AlgState : getUsedNodesList()
 AlgState : getCurrentNode()
 
-class Ordinator
-Ordinator : Memento pattern class
-Ordinator : save()
-Ordinator : restore(algState)
-
 
 class GraphOriented
 GraphOriented : regular oriented graph\n
 GraphOriented : jeneric based\n
 
-GraphOriented : nodes
+GraphOriented : nodes : HashSet<T>
+GraphOriented : adjacencyMap : HashMap<T, HashSet<T>>
 
 GraphOriented : addEdge()
-GraphOriented : addNode()
-GraphOriented : giveNodesChildren()
-GraphOriented : giveNode()
+GraphOriented : inversed() : GraphOriented
+
+
 
 abstract class Observable
 Observable : Observer pattern class\nJava-implemented
@@ -54,17 +53,17 @@ Observable : update()
 abstract class Observer
 Observer : Observer pattern class\nJava-implemented
 
-Observer -|> Drawer
-Observable -|> AlgHandler
+Observer <|- Drawer
+Observable <|- AlgHandler
 
 
-App +-- Drawer : Window created by Drawer
-Drawer --> AlgHandler
-Drawer --> AlgState
+App -- Drawer : Window created by Drawer
+Drawer <-- AlgHandler
+Drawer <-- AlgState
 AlgHandler ..> Drawer : update()
-AlgHandler --* AlgState
-AlgState --> GraphOriented
-AlgState <.right. Ordinator
+AlgHandler *-- AlgState
+AlgState <-- GraphOriented
+
 
 
 

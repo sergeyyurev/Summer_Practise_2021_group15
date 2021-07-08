@@ -4,15 +4,15 @@ skinparam backgroundColor #EEEEEE
 hide empty description
 title Project state description\n
 
-[*] --> Boot : open app
-Boot --> Working_app : Regular boot
-Boot --> Working_app : File input boot
-Working_app --> Working_app : step forward/back/to_the_end
-Working_app --> Working_app : restart on new data
-Working_app --> Adding_data 
-Adding_data --> Working_app
-Adding_data : adding data command
 
-Working_app --> [*] : close app
+[*] --> Initialisation : Regular boot
+[*] --> Initialisation : File input boot
+Initialisation --> Reverse_Graph_DFS
+Reverse_Graph_DFS --> Reverse_Graph_DFS : steps
+Reverse_Graph_DFS --> Prioritised_Graph_DFS : nodes order is completed 
+Prioritised_Graph_DFS --> Prioritised_Graph_DFS : steps 
+Prioritised_Graph_DFS --> Completed : no unhandeled nodes left
+Completed --> Initialisation : new data or other actions
+Initialisation --> [*] : close app
 
 @enduml
