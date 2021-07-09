@@ -222,7 +222,26 @@ class AlgHandler<T>(private var currentStage : CurrentStage = CurrentStage.INITI
 
 fun main()
 {
-    var theGraph = mockInput( listOf(Pair("a","b"), Pair("b","a"), Pair("a","c"), Pair("c","a"), Pair("c","b") , Pair("b","c")) )
+    //---------------------------------------
+    val scan = java.util.Scanner(System.`in`)
+    var c = ""
+    var d = ""
+    var enteredList: MutableList<Pair<String, String>> = mutableListOf()
+
+    while(scan.hasNext()){
+        c = scan.nextLine()
+
+        if(scan.hasNext()){
+            d = scan.nextLine()
+
+            enteredList.add(Pair(c, d))            
+        }
+        else
+            break
+    }
+    //---------------------------------------------
+
+    var theGraph = mockInput(enteredList)
     println("Graph")
     println("$theGraph")
 
