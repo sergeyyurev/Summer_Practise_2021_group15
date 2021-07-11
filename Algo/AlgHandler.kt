@@ -74,7 +74,7 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
     fun getEdges() : List<Pair<T,T>>
     {
         var result = graph.toList()
-        result.filter(it.first == it.second)
+        result.filter{it.first == it.second}
         return result
     }
 
