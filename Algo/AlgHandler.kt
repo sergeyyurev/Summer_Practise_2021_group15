@@ -36,6 +36,9 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
 
     fun refresh()
     {
+        if (currentStage == CurrentStage.REVERSE_GRAPH_DFS)
+            graph = graph.inversed()
+
         currentStage = CurrentStage.INITIALISATION
         searchStack  = mutableListOf<T>()
         handeledNodes = HashSet()
@@ -43,7 +46,7 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
         connectComponents = mutableListOf<MutableList<T>>()
         
         history = mutableListOf<AlgState<T>>()
-    }
+   }
 
     fun addNode(vertex: T)
     {
@@ -74,7 +77,7 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
     fun getEdges() : List<Pair<T,T>>
     {
         var list = graph.toList()
-        return list.filter{it.first == it.second}   
+        return list.filter{it.first != it.second}   
     }
 
     fun getStackHead() : T?
