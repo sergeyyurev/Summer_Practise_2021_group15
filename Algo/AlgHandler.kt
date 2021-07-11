@@ -34,14 +34,41 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
         
     }
 
-    fun addNode(node: T)
+    fun refresh()
     {
-        graph.addEdge(node, node)
+        currentStage = CurrentStage.INITIALISATION
+        searchStack  = mutableListOf<T>()
+        handeledNodes = HashSet()
+        nodesOrder = emptyList<T>()
+        connectComponents = mutableListOf<MutableList<T>>()
+        
+        history = mutableListOf<AlgState<T>>()
+    }
+
+    fun addNode(vertex: T)
+    {
+        graph.addEdge(vertex, vertex)
     }
 
     fun addEdge(sourceVertex: T, destinationVertex: T)
     {
         graph.addEdge(sourceVertex, destinationVertex)
+    }
+
+    fun removeNode(vertex : T)
+    {
+        if (currentStage == CurrentStage.INITIALISATION)
+        {
+            graph.removeNode(vertex)
+        }
+    }
+
+    fun removeEdge(sourceVertex: T, destinationVertex: T)
+    {
+        if (currentStage == CurrentStage.INITIALISATION)
+        {
+            graph.removeEdge(sourceVertex, destinationVertex)
+        }
     }
 
     fun getEdges() : List<Pair<T,T>>

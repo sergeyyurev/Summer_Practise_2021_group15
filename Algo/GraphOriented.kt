@@ -17,7 +17,38 @@ class GraphOriented<T>()
 
         adjacencyMap
             .computeIfAbsent(sourceVertex) { HashSet() }
+            .add(sourceVertex)
+
+        adjacencyMap
+            .computeIfAbsent(destinationVertex) { HashSet() }
             .add(destinationVertex)
+
+        adjacencyMap
+            .computeIfAbsent(sourceVertex) { HashSet() }
+            .add(destinationVertex)
+    }
+
+    fun removeEdge(sourceVertex: T, destinationVertex: T)
+    {
+        if (adjacencyMap.containsKey(sourceVertex))
+        {
+            if (adjacencyMap[sourceVertex]!!.contains(destinationVertex))
+            {
+                adjacencyMap[sourceVertex]!!.remove(destinationVertex)
+                if (adjacencyMap[sourceVertex]!!.isEmpty())
+                    adjacencyMap.remove(sourceVertex)
+            }
+        }
+    }
+
+    fun removeNode(vertex : T)
+    {
+        if (adjacencyMap.containsKey(vertex))
+            adjacencyMap.remove(vertex)
+        for (i in adjacencyMap.keys)
+        {
+            removeEdge(i, vertex)
+        }
     }
 
     fun inversed() : GraphOriented<T>
