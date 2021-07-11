@@ -89,6 +89,11 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
         return this.handeledNodes.toList()
     }
 
+    fun getNodes() : List<T>
+    {
+        return this.graph.nodes.toList()
+    }
+
     override fun toString() : String
     {
         var res = String()
@@ -189,7 +194,7 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
                 {
                     val currentNode = searchStack.peek()
 
-                    if (!(currentNode in handeledNodes))
+                    if (currentNode !in handeledNodes)
                     {
                         handeledNodes.add(currentNode)
                         if (graph.adjacencyMap[currentNode] == null)
@@ -197,7 +202,7 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
                         
                         for (node in graph.adjacencyMap[currentNode]!!)
                         {
-                            if (!(node in handeledNodes))
+                            if (node !in handeledNodes)
                             {
                                 searchStack.push(node)
                             }
@@ -207,7 +212,7 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
                     else
                     {
                         searchStack.pop()
-                        if (!(currentNode in nodesOrder))
+                        if (currentNode !in nodesOrder)
                             nodesOrder += currentNode
                     }
                 }
@@ -226,7 +231,7 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
                     
                     for (i in graph.nodes)
                     {
-                        if (!(i in handeledNodes) )
+                        if (i !in handeledNodes)
                         {
                             searchStack.push(i)
                             return
@@ -243,7 +248,7 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
                 {
                     val currentNode = searchStack.peek()
 
-                    if (!(currentNode in handeledNodes))
+                    if (currentNode !in handeledNodes)
                     {
                         handeledNodes.add(currentNode)
                         if (graph.adjacencyMap[currentNode] == null)
@@ -251,7 +256,7 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
 
                         for (node in graph.adjacencyMap[currentNode]!!)
                         {
-                            if (!(node in handeledNodes))
+                            if (node !in handeledNodes)
                             {
                                 searchStack.push(node)
                             }
@@ -263,7 +268,7 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
                         searchStack.pop()
                         var tail = connectComponents.last()
                         connectComponents.removeAt(connectComponents.size -1)
-                        if (!(currentNode in tail))
+                        if (currentNode !in tail)
                             tail.add(currentNode)
                         connectComponents.add(tail)
                     }
@@ -280,7 +285,7 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
 
                     for (i in nodesOrder)
                     {
-                        if (!(i in handeledNodes))
+                        if (i !in handeledNodes)
                         {
                             searchStack.push(i)
                             connectComponents.add(mutableListOf<T>())
@@ -330,14 +335,23 @@ fun main()
 //     }
      //---------------------------------------------
 
-    var theGraph = mockInput( listOf(Pair("a","a"), Pair("b","c"), Pair("c","b") , Pair("b","d")) )
-    println("Graph")
-    println("$theGraph")
+    var algHandler = AlgHandler<String>()
+    algHandler.addEdge("a", "b")
+    algHandler.addEdge("b", "a")
+    algHandler.addEdge("a", "c")
+    algHandler.addEdge("c", "a")
+    algHandler.addEdge("b", "c")
+    algHandler.addEdge("c", "b")
 
-    var algHandler = AlgHandler(graph = theGraph)
+    algHandler.removeNode("*")
+    algHandler.removeEdge("*", "a")
+    algHandler.removeEdge("a", "*")
+    
 
-    algHandler.doAlgUntilCompleted()
-    println("Print alg result")
-    val res = algHandler.connectComponentsToString()
-    println("$res")
+    println("AlgHandler -- ${algHandler.toString()}")
+
+    // algHandler.doAlgUntilCompleted()
+    // println("Print alg result")
+    // val res = algHandler.connectComponentsToString()
+    // println("$res")
 }
