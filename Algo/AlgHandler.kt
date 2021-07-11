@@ -94,6 +94,11 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
         return this.graph.nodes.toList()
     }
 
+    fun getCurrentStage() : CurrentStage
+    {
+        return currentStage
+    }
+
     override fun toString() : String
     {
         var res = String()
