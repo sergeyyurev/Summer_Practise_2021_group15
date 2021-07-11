@@ -73,7 +73,9 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
 
     fun getEdges() : List<Pair<T,T>>
     {
-        return graph.toList()
+        var result = graph.toList()
+        result.filter(it.first == it.second)
+        return result
     }
 
     fun getStackHead() : T?
@@ -183,6 +185,7 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
                     currentStage = CurrentStage.COMPLETED
                     return
                 }
+
                 nodesOrder = graph.nodes.toList()
                 searchStack.add(nodesOrder[0])
                 handeledNodes.clear()
