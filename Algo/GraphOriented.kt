@@ -50,7 +50,6 @@ class GraphOriented<T>()
                 nodes.remove(destinationVertex)
             }
         }
-
     }
 
     fun removeNode(vertex : T)

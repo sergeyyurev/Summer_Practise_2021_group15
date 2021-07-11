@@ -395,26 +395,15 @@ fun main()
     algHandler.addEdge("c", "a")
     algHandler.addEdge("b", "c")
     algHandler.addEdge("c", "b")
+    algHandler.addEdge("c", "d")
+    
 
     algHandler.removeNode("a")
-    // println(algHandler.toString())
+    println(algHandler.toString())
     println(algHandler.getNodes().toString())
 
     // algHandler.doAlgUntilCompleted()
     // println("Print alg result")
     // val res = algHandler.connectComponentsToString()
     // println("$res")
-
-    println("AlgHandler -- ${algHandler.toString()}")
-    algHandler.doAlgStep()
-    algHandler.doAlgStep()
-    algHandler.doAlgStep()
-    algHandler.doAlgStep()
-    algHandler.doAlgStep()
-
-    println("logs\n${algHandler.logs}")
-    algHandler.restorePrevState()
-    println("-------------------------")
-    println("logs\n${algHandler.logs}")
-    
 }
