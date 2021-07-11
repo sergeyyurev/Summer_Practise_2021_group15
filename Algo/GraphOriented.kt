@@ -30,6 +30,9 @@ class GraphOriented<T>()
 
     fun removeEdge(sourceVertex: T, destinationVertex: T)
     {
+        nodes.remove(sourceVertex)
+        nodes.remove(destinationVertex)
+
         if (adjacencyMap.containsKey(sourceVertex))
         {
             if (adjacencyMap[sourceVertex]!!.contains(destinationVertex))
@@ -43,6 +46,8 @@ class GraphOriented<T>()
 
     fun removeNode(vertex : T)
     {
+        nodes.remove(vertex)
+
         if (adjacencyMap.containsKey(vertex))
             adjacencyMap.remove(vertex)
         for (i in adjacencyMap.keys)
