@@ -393,7 +393,8 @@ fun main()
     algHandler.addEdge("c", "b")
 
     algHandler.removeNode("a")
-    println(algHandler.toString())
+    // println(algHandler.toString())
+    println(algHandler.getNodes().toString())
 
     // algHandler.doAlgUntilCompleted()
     // println("Print alg result")
