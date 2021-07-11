@@ -49,6 +49,19 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
         return graph.toList()
     }
 
+    fun getStackHead() : T?
+    {
+        if (searchStack.isNotEmpty())
+            return searchStack.peek()
+        else
+            return null
+    }
+
+    fun getHandeledNodes() : List<T>
+    {
+        return this.handeledNodes.toList()
+    }
+
     override fun toString() : String
     {
         var res = String()
