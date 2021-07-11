@@ -3,6 +3,7 @@ typealias Stack<T> = MutableList<T>
 fun <T> Stack<T>.push(item: T) = add(item)
 fun <T> Stack<T>.pop(): T = removeAt(lastIndex)
 fun <T> Stack<T>.peek(): T = this[lastIndex]
+fun String.log(item: String) = this + item
 
 
 enum class CurrentStage
@@ -23,6 +24,7 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
     private var connectComponents : MutableList<MutableList<T>> = mutableListOf<MutableList<T>>()
     
     private var history : Stack<AlgState<T>> = mutableListOf<AlgState<T>>()
+    var logs : String = String()
 
     private class AlgState<T>(val currentStage : CurrentStage = CurrentStage.INITIALISATION,
                               val graph : GraphOriented<T> = GraphOriented(),
@@ -131,7 +133,6 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
                                   handeledNodes = HashSet(this.handeledNodes),
                                   nodesOrder = this.nodesOrder.toList(),
                                   connectComponents = this.connectComponentsCopy() ))
-        println("Now history size is ${history.size}")
     }
     
     private fun restoreAlgState(algState : AlgState<T>)
@@ -182,6 +183,7 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
         {
             CurrentStage.INITIALISATION -> 
             {
+                logs.log("Initialisation of the algorithm\n")
                 if (graph.nodes.size == 0)
                 {
                     currentStage = CurrentStage.COMPLETED
@@ -192,6 +194,8 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
                 searchStack.add(nodesOrder[0])
                 handeledNodes.clear()
                 currentStage = CurrentStage.REVERSE_GRAPH_DFS
+                logs.log("Go to the next stage -- reverse graph DFS\n")
+                logs.log("Inversing graph...\n")
                 graph = graph.inversed()
                 nodesOrder = emptyList()
                 connectComponents.add(mutableListOf<T>())
@@ -203,17 +207,23 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
                 if (searchStack.isNotEmpty())
                 {
                     val currentNode = searchStack.peek()
-
+                    logs.log("Handeling node $currentNode\n")
+                
                     if (currentNode !in handeledNodes)
                     {
+                        logs.log("The node isn't handeled yet\n")
                         handeledNodes.add(currentNode)
                         if (graph.adjacencyMap[currentNode] == null)
+                        {
+                            logs.log("No nodes to add to the stack\n")
                             return
-                        
+                        }
+
                         for (node in graph.adjacencyMap[currentNode]!!)
                         {
                             if (node !in handeledNodes)
                             {
+                                logs.log("Adding node $node to the stack\n")
                                 searchStack.push(node)
                             }
                         }
@@ -221,16 +231,25 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
 
                     else
                     {
+                        logs.log("This node has already been handeled\n")
+                        logs.log("Deleting it from the stack and adding it to the nodes order\n(if there is no this node yet)\n")
                         searchStack.pop()
                         if (currentNode !in nodesOrder)
+                        {
                             nodesOrder += currentNode
+                            logs.log("Now nodes order is $nodesOrder\n")
+                        }
                     }
                 }
 
                 else // Local stop, but there is nodes left
                 {
+                    logs.log("There are no nodes left in the stack\n")
                     if (handeledNodes.size == graph.nodes.size) // Aka there is no not handeled nodes
                     {
+                        logs.log("All nodes have been handeled\n")
+                        logs.log("Preparing for the next stage -- prioritized graph DFS\n")
+                        logs.log("Inversing graph back...\n")
                         currentStage = CurrentStage.PRIORITIZED_GRAPH_DFS
                         graph = graph.inversed()
                         handeledNodes.clear()
@@ -243,6 +262,7 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
                     {
                         if (i !in handeledNodes)
                         {
+                            logs.log("Adding node $i to the stack\n")
                             searchStack.push(i)
                             return
                         }
@@ -257,17 +277,22 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
                 if (searchStack.isNotEmpty())
                 {
                     val currentNode = searchStack.peek()
-
+                    logs.log("Handeling node $currentNode\n")
+                    
                     if (currentNode !in handeledNodes)
                     {
+                        logs.log("The node isn't handeled yet\n")
                         handeledNodes.add(currentNode)
                         if (graph.adjacencyMap[currentNode] == null)
+                        {
+                            logs.log("No nodes to add to the stack\n")
                             return
-
+                        }
                         for (node in graph.adjacencyMap[currentNode]!!)
                         {
                             if (node !in handeledNodes)
                             {
+                                logs.log("Adding node $node to the stack\n")
                                 searchStack.push(node)
                             }
                         }
@@ -275,19 +300,25 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
 
                     else
                     {
+                        logs.log("This node has already been handeled\n")
+                        logs.log("Adding node to current connect components\n")
                         searchStack.pop()
                         var tail = connectComponents.last()
                         connectComponents.removeAt(connectComponents.size -1)
                         if (currentNode !in tail)
                             tail.add(currentNode)
                         connectComponents.add(tail)
+                        logs.log("Now connect components are ${connectComponentsToString()}\n")
                     }
                 }
 
                 else
                 {
+                    logs.log("There are no nodes left in the stack\n")
                     if (handeledNodes.size == graph.nodes.size) // Aka there is no not handeled nodes
                     {
+                        logs.log("All nodes have been handeled\n")
+                        logs.log("Now the algotihm has stopped working\n")
                         currentStage = CurrentStage.COMPLETED
                         handeledNodes.clear()
                         return
@@ -298,6 +329,9 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
                         if (i !in handeledNodes)
                         {
                             searchStack.push(i)
+                            logs.log("Adding node $i,\n choosed by nodes order $nodesOrder,\n to the stack\n")
+                            logs.log("And finishing this connection component\n")
+                            logs.log("Now the components are ${connectComponentsToString()}\n")
                             connectComponents.add(mutableListOf<T>())
                             return
                         }
@@ -309,6 +343,7 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
 
             CurrentStage.COMPLETED ->
             {
+                logs.log("The algorithm is complete and the components are ${connectComponentsToString()}")
                 return
             } 
             
@@ -358,7 +393,7 @@ fun main()
     algHandler.removeEdge("a", "*")
     
 
-    println("AlgHandler -- ${algHandler.toString()}")
+    // println("AlgHandler -- ${algHandler.toString()}")
 
     // algHandler.doAlgUntilCompleted()
     // println("Print alg result")
