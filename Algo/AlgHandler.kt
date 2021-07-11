@@ -1,4 +1,9 @@
-import java.util.Stack
+typealias Stack<T> = MutableList<T>
+
+fun <T> Stack<T>.push(item: T) = add(item)
+fun <T> Stack<T>.pop(): T = removeAt(lastIndex)
+fun <T> Stack<T>.peek(): T = this[lastIndex]
+
 
 enum class CurrentStage
 {
@@ -9,47 +14,39 @@ enum class CurrentStage
 }
 
 
-class AlgHandler<T>(private var currentStage : CurrentStage = CurrentStage.INITIALISATION,
-                    private var graph : GraphOriented<T> = GraphOriented(),
-                    private var searchStack : Stack<T> = Stack(),
-                    private var handeledNodes : HashSet<T> = HashSet(),
-                    private var nodesOrder : List<T> = emptyList<T>(),
-                    private var connectComponents : MutableList<MutableList<T>> = mutableListOf<MutableList<T>>())
+class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
 {
+    private var currentStage : CurrentStage = CurrentStage.INITIALISATION
+    private var searchStack : Stack<T> = mutableListOf<T>()
+    private var handeledNodes : HashSet<T> = HashSet()
+    private var nodesOrder : List<T> = emptyList<T>()
+    private var connectComponents : MutableList<MutableList<T>> = mutableListOf<MutableList<T>>()
+    
+    private var history : Stack<AlgState<T>> = mutableListOf<AlgState<T>>()
+
     private class AlgState<T>(val currentStage : CurrentStage = CurrentStage.INITIALISATION,
                               val graph : GraphOriented<T> = GraphOriented(),
-                              val searchStack : Stack<T> = Stack(),
+                              val searchStack : Stack<T> = mutableListOf<T>(),
                               val handeledNodes : HashSet<T> = HashSet(),
                               val nodesOrder : List<T> = emptyList<T>(),
                               var connectComponents : MutableList<MutableList<T>> = mutableListOf<MutableList<T>>())
     {   
-    // TODO frontend getters
+        
     }
 
-    private fun createAlgState() : AlgState<T>
+    fun addNode(node: T)
     {
-        return AlgState<T>(currentStage, graph, searchStack, handeledNodes, nodesOrder, connectComponents)
-    }
-    
-    private fun restoreAlgState(algState : AlgState<T>)
-    {
-        this.currentStage = algState.currentStage
-        this.graph = algState.graph
-        this.searchStack = algState.searchStack
-        this.handeledNodes = algState.handeledNodes
-        this.nodesOrder = algState.nodesOrder
-        this.connectComponents = algState.connectComponents
+        graph.addEdge(node, node)
     }
 
-    fun connectComponentsToString() : String
+    fun addEdge(sourceVertex: T, destinationVertex: T)
     {
-        var result = String()
-        for (i in connectComponents)
-        {
-            var head = i.joinToString(separator = ", ", prefix = "[", postfix = "]")
-            result += head + " "
-        }
-        return result
+        graph.addEdge(sourceVertex, destinationVertex)
+    }
+
+    fun getEdges() : List<Pair<T,T>>
+    {
+        return graph.toList()
     }
 
     override fun toString() : String
@@ -63,7 +60,7 @@ class AlgHandler<T>(private var currentStage : CurrentStage = CurrentStage.INITI
         val connectComponentsStr = this.connectComponentsToString()
 
         res += "currentStage is $currentStageStr\n"
-        res += "graph is $graphStr\n"
+        res += "graph is \n$graphStr\n"
         res += "searchStack is $searchStackStr\n"
         res += "handeledNodes is $handeledNodesStr\n"
         res += "nodesOrder is $nodesOrderStr\n"
@@ -72,9 +69,61 @@ class AlgHandler<T>(private var currentStage : CurrentStage = CurrentStage.INITI
         return res
     }
 
+    private fun save()
+    {
+        history.push(AlgState<T>( currentStage = this.currentStage,
+                                  graph = this.graph.copy(),
+                                  searchStack = this.searchStack.toMutableList(),
+                                  handeledNodes = HashSet(this.handeledNodes),
+                                  nodesOrder = this.nodesOrder.toList(),
+                                  connectComponents = this.connectComponentsCopy() ))
+        println("Now history size is ${history.size}")
+    }
+    
+    private fun restoreAlgState(algState : AlgState<T>)
+    {
+        this.currentStage = algState.currentStage
+        this.graph = algState.graph
+        this.searchStack = algState.searchStack
+        this.handeledNodes = algState.handeledNodes
+        this.nodesOrder = algState.nodesOrder
+        this.connectComponents = algState.connectComponents
+    }
+
+    fun restorePrevState()
+    {
+        if (history.isNotEmpty())
+        {
+            val save = history.pop()
+            restoreAlgState(save)
+        }
+    }
+
+    fun connectComponentsToString() : String
+    {
+        var result = String()
+        for (i in connectComponents)
+        {
+            var head = i.joinToString(separator = ", ", prefix = "[", postfix = "]")
+            result += head + " "
+        }
+        return result
+    }
+
+    fun connectComponentsCopy() : MutableList<MutableList<T>>
+    {
+        var result = mutableListOf<MutableList<T>>()
+        for (i in connectComponents)
+        {
+            result += i.toMutableList()
+        }
+        return result
+    }
+
     fun doAlgStep()
     {
-        println(toString())
+        this.save()        
+        
         when (currentStage)
         {
             CurrentStage.INITIALISATION -> 
@@ -222,7 +271,26 @@ class AlgHandler<T>(private var currentStage : CurrentStage = CurrentStage.INITI
 
 fun main()
 {
-    var theGraph = mockInput( listOf(Pair("a","b"), Pair("b","a"), Pair("a","c"), Pair("c","a"), Pair("c","b") , Pair("b","c")) )
+     //---------------------------------------
+//     val scan = java.util.Scanner(System.`in`)
+//     var c = ""
+//     var d = ""
+//     var enteredList: MutableList<Pair<String, String>> = mutableListOf()
+
+//     while(scan.hasNext()){
+//         c = scan.nextLine()
+
+//         if(scan.hasNext()){
+//             d = scan.nextLine()
+
+//             enteredList.add(Pair(c, d))            
+//         }
+//         else
+//             break
+//     }
+     //---------------------------------------------
+
+    var theGraph = mockInput( listOf(Pair("a","a"), Pair("b","c"), Pair("c","b") , Pair("b","d")) )
     println("Graph")
     println("$theGraph")
 

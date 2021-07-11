@@ -1,6 +1,14 @@
-class GraphOriented<T> {
-    val adjacencyMap : HashMap<T, HashSet<T>> = HashMap()
+class GraphOriented<T>()
+{
+    var adjacencyMap : HashMap<T, HashSet<T>> = HashMap()
     var nodes : HashSet<T> = HashSet<T>()
+
+    private fun loader(adjacencyMapInp : HashMap<T, HashSet<T>> , nodesInp : HashSet<T> )
+    {
+        adjacencyMap = adjacencyMapInp
+        nodes = nodesInp
+    }
+
 
     fun addEdge(sourceVertex: T, destinationVertex: T)
     {
@@ -24,12 +32,31 @@ class GraphOriented<T> {
         return res
     }
 
+    fun toList() : List<Pair<T, T>>
+    {
+        var res : List<Pair<T, T>> = emptyList()
+        for (i in adjacencyMap.keys)
+        {
+            for (j : T in adjacencyMap[i]!!)
+                res += Pair(i, j)
+        }
+        return res
+    }
+
     override fun toString(): String = StringBuffer().apply {
-        for (key in adjacencyMap.keys) {
+        for (key in adjacencyMap.keys)
+        {
             append("$key -> ")
             append(adjacencyMap[key]?.joinToString(", ", "[", "]\n"))
         }
     }.toString()
+
+    fun copy() : GraphOriented<T>
+    {
+        val graph = GraphOriented<T>()
+        graph.loader(adjacencyMap, nodes) 
+        return graph
+    }
 }
 
 fun mockInput(inp : List<Pair<String, String>>) : GraphOriented<String>
@@ -41,14 +68,4 @@ fun mockInput(inp : List<Pair<String, String>>) : GraphOriented<String>
     }
     return res
 }
-
-// fun main()
-// {
-//     var theGraph = mockInput( listOf(Pair("a","b"), Pair("a","c"), Pair("b","c"), Pair("c","d")) )
-//     println("$theGraph")
-
-//     val res = theGraph.adjacencyMap["a"]
-//     println("theGraph.adjacencyMap[a] = $res")
-
-// }
 
