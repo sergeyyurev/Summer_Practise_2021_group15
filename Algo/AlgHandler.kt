@@ -21,16 +21,17 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
     private var handeledNodes : HashSet<T> = HashSet()
     private var nodesOrder : List<T> = emptyList<T>()
     private var connectComponents : MutableList<MutableList<T>> = mutableListOf<MutableList<T>>()
-    
-    private var history : Stack<AlgState<T>> = mutableListOf<AlgState<T>>()
     var logs : String = String()
+
+    private var history : Stack<AlgState<T>> = mutableListOf<AlgState<T>>()
 
     private class AlgState<T>(val currentStage : CurrentStage = CurrentStage.INITIALISATION,
                               val graph : GraphOriented<T> = GraphOriented(),
                               val searchStack : Stack<T> = mutableListOf<T>(),
                               val handeledNodes : HashSet<T> = HashSet(),
                               val nodesOrder : List<T> = emptyList<T>(),
-                              var connectComponents : MutableList<MutableList<T>> = mutableListOf<MutableList<T>>())
+                              var connectComponents : MutableList<MutableList<T>> = mutableListOf<MutableList<T>>(),
+                              var logs : String = String())
     {   
         
     }
@@ -45,7 +46,8 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
         handeledNodes = HashSet()
         nodesOrder = emptyList<T>()
         connectComponents = mutableListOf<MutableList<T>>()
-        
+        logs = String()
+
         history = mutableListOf<AlgState<T>>()
    }
 
@@ -136,7 +138,8 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
                                   searchStack = this.searchStack.toMutableList(),
                                   handeledNodes = HashSet(this.handeledNodes),
                                   nodesOrder = this.nodesOrder.toList(),
-                                  connectComponents = this.connectComponentsCopy() ))
+                                  connectComponents = this.connectComponentsCopy(),
+                                  logs = this.logs ))
     }
     
     private fun restoreAlgState(algState : AlgState<T>)
@@ -147,6 +150,7 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
         this.handeledNodes = algState.handeledNodes
         this.nodesOrder = algState.nodesOrder
         this.connectComponents = algState.connectComponents
+        this.logs = algState.logs
     }
 
     fun restorePrevState()
@@ -182,7 +186,7 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
     fun doAlgStep()
     {
         this.save()        
-        
+        logs += "\n"
         when (currentStage)
         {
             CurrentStage.INITIALISATION -> 
@@ -198,7 +202,7 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
                 searchStack.add(nodesOrder[0])
                 handeledNodes.clear()
                 currentStage = CurrentStage.REVERSE_GRAPH_DFS
-                logs += ("Go to the next stage -- reverse graph DFS\n")
+                logs += ("Go to the next stage\nReverse graph DFS\n")
                 logs += ("Inversing graph...\n")
                 graph = graph.inversed()
                 nodesOrder = emptyList()
@@ -236,7 +240,7 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
                     else
                     {
                         logs += ("This node has already been handeled\n")
-                        logs += ("Deleting it from the stack and adding it to the nodes order\n(if there is no this node yet)\n")
+                        logs += ("Deleting it from the stack\nand adding it to the nodes order\n(if there is no this node yet)\n")
                         searchStack.pop()
                         if (currentNode !in nodesOrder)
                         {
@@ -252,7 +256,7 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
                     if (handeledNodes.size == graph.nodes.size) // Aka there is no not handeled nodes
                     {
                         logs += ("All nodes have been handeled\n")
-                        logs += ("Preparing for the next stage -- prioritized graph DFS\n")
+                        logs += ("Preparing for the next stage\nPrioritized graph DFS\n")
                         logs += ("Inversing graph back...\n")
                         currentStage = CurrentStage.PRIORITIZED_GRAPH_DFS
                         graph = graph.inversed()
@@ -401,6 +405,16 @@ fun main()
     // val res = algHandler.connectComponentsToString()
     // println("$res")
 
-    // println("AlgHandler -- ${algHandler.toString()}")
-    // println("logs\n ${algHandler.logs}")
+    println("AlgHandler -- ${algHandler.toString()}")
+    algHandler.doAlgStep()
+    algHandler.doAlgStep()
+    algHandler.doAlgStep()
+    algHandler.doAlgStep()
+    algHandler.doAlgStep()
+
+    println("logs\n${algHandler.logs}")
+    algHandler.restorePrevState()
+    println("-------------------------")
+    println("logs\n${algHandler.logs}")
+    
 }

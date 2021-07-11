@@ -1,0 +1,61 @@
+[b, c]
+AlgHandler -- currentStage is INITIALISATION
+graph is 
+b -> [b, c]
+c -> [b, c]
+
+searchStack is []
+handeledNodes is []
+nodesOrder is []
+connectComponents is 
+
+logs
+
+Initialisation of the algorithm
+Go to the next stage
+Reverse graph DFS
+Inversing graph...
+
+Handeling node b
+The node isn't handeled yet
+Adding node c to the stack
+
+Handeling node c
+The node isn't handeled yet
+
+Handeling node c
+This node has already been handeled
+Deleting it from the stack
+and adding it to the nodes order
+(if there is no this node yet)
+Now nodes order is [c]
+
+Handeling node b
+This node has already been handeled
+Deleting it from the stack
+and adding it to the nodes order
+(if there is no this node yet)
+Now nodes order is [c, b]
+
+-------------------------
+logs
+
+Initialisation of the algorithm
+Go to the next stage
+Reverse graph DFS
+Inversing graph...
+
+Handeling node b
+The node isn't handeled yet
+Adding node c to the stack
+
+Handeling node c
+The node isn't handeled yet
+
+Handeling node c
+This node has already been handeled
+Deleting it from the stack
+and adding it to the nodes order
+(if there is no this node yet)
+Now nodes order is [c]
+
