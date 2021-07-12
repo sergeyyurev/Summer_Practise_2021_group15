@@ -1,5 +1,9 @@
+package gui.listeners
+
 import com.mxgraph.model.mxCell
 import com.mxgraph.swing.mxGraphComponent
+import gui.Drawer
+import gui.listeners.DrawerMouseAction
 import java.awt.event.MouseEvent
 
 class VertexRemoveListener(drawer: Drawer, component: mxGraphComponent) : DrawerMouseAction(drawer, component) {
@@ -11,17 +15,11 @@ class VertexRemoveListener(drawer: Drawer, component: mxGraphComponent) : Drawer
         val cell: Any = component.getCellAt(e.x, e.y) ?: return
         if (cell !is mxCell) return
 
-        // Запишем ID вершины, чтобы заместить им добавление следующей
-        if (cell.isVertex)
-            drawer.setNextId(cell.id[0])
-
         drawer.graph.model.beginUpdate()
         try {
             drawer.graph.removeCells(arrayOf(cell))
         } finally {
             drawer.graph.model.endUpdate()
         }
-
-        // TODO("Interact with AlgState")
     }
 }

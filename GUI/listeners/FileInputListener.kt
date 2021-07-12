@@ -1,18 +1,22 @@
+package gui.listeners
+
+import gui.Drawer
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout
 import com.mxgraph.model.mxCell
+import gui.utils.Reader
 import java.awt.event.ActionEvent
 import javax.swing.JFileChooser
 
 
 class FileInputListener(drawer: Drawer) : DrawerButtonAction(drawer) {
     override fun actionPerformed(e: ActionEvent?) {
-        val data = Reader.readFromFile()
+
 
         val chooser = JFileChooser()
         val ret = chooser.showDialog(null, "Открыть файл")
+        val data: Pair<MutableSet<String>, MutableSet<Pair<String, String>>>
         if (ret == JFileChooser.APPROVE_OPTION) {
-            chooser.selectedFile
-            // TODO("Send file to reader")
+            data = Reader.readingFromFile(chooser.selectedFile)
         } else return
 
         val parent = drawer.graph.defaultParent

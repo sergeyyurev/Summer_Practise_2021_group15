@@ -1,39 +1,22 @@
+package gui
+
+import gui.strategies.DisplayCreationStrategy
+import gui.strategies.InputMenuCreation
+import algorithm.AlgHandler
 import com.mxgraph.model.mxCell
 import com.mxgraph.view.mxGraph
+import gui.listeners.AddCellListener
+import gui.listeners.RemoveCellListener
 import java.awt.BorderLayout
 import java.awt.Dimension
 import javax.swing.*
 
 
-class Reader {
-    // Класс представляет Mock файлового ввода
-
-    companion object {
-        @JvmStatic
-        fun readFromFile(): Pair<ArrayList<String>, ArrayList<Pair<String, String>>> {
-            val vertexes = ArrayList<String>()
-            vertexes.add("A")
-            vertexes.add("B")
-            vertexes.add("C")
-            vertexes.add("D")
-
-            val edges = ArrayList<Pair<String, String>>()
-            edges.add(Pair("A", "B"))
-            edges.add(Pair("B", "C"))
-            edges.add(Pair("C", "D"))
-            edges.add(Pair("D", "C"))
-            edges.add(Pair("C", "A"))
-
-            return Pair(vertexes, edges)
-        }
-    }
-}
-
-
 class Drawer : JFrame("Nobody expects the spanish inquisition") {
+    var algHandler = AlgHandler<String>()
+
     val graph: mxGraph
     var strategyOfMenuCreation: DisplayCreationStrategy = InputMenuCreation()
-
     val sizeOfVertex = 35.0
     val styleOfVertex = "rounded=1"
     private var idOfNextVertex = 'A'
@@ -42,6 +25,7 @@ class Drawer : JFrame("Nobody expects the spanish inquisition") {
         defaultCloseOperation = EXIT_ON_CLOSE
         isVisible = true
         preferredSize = Dimension(720, 480)
+        isResizable = false
         setSize(720, 480)
 
         graph = object : mxGraph() {
@@ -50,11 +34,15 @@ class Drawer : JFrame("Nobody expects the spanish inquisition") {
                 return if (isEdge) false else super.isCellSelectable(cell)
             }
         }
-        setupGraphAllows()
+
+        setupGraphSettings()
         paint()
     }
 
-    private fun setupGraphAllows() {
+    private fun setupGraphSettings() {
+        graph.addListener("cellsAdded", AddCellListener(this))
+        graph.addListener("cellsRemoved", RemoveCellListener(this))
+
         graph.isMultigraph = false
         graph.isAllowLoops = false
         graph.isPortsEnabled = false
@@ -64,7 +52,7 @@ class Drawer : JFrame("Nobody expects the spanish inquisition") {
         graph.isCellsResizable = false
     }
 
-    private fun getVertexById(id: String): mxCell? {
+    fun getVertexById(id: String): mxCell? {
         val cells = graph.getChildCells(graph.defaultParent)
         for (cell in cells) {
             if (cell is mxCell) {
@@ -96,9 +84,12 @@ class Drawer : JFrame("Nobody expects the spanish inquisition") {
     }
 
     private fun createLoggingPane(): JScrollPane {
-        val text = JTextArea("> Intermediate\ninformation and logging", 20, 20)
+        val text = JTextArea(algHandler.logs, 20, 20)
         text.isEditable = false
-        return JScrollPane(text)
+        val scroll = JScrollPane(text)
+
+        scroll.verticalScrollBar.value = scroll.verticalScrollBar.maximum
+        return scroll
     }
 
     fun paint() {
