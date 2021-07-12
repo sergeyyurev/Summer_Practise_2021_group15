@@ -1,4 +1,8 @@
+package gui.strategies
+
 import com.mxgraph.swing.mxGraphComponent
+import gui.Drawer
+import gui.listeners.*
 import javax.swing.JButton
 import javax.swing.JPanel
 

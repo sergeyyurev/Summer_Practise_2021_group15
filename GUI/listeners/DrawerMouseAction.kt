@@ -1,3 +1,6 @@
+package gui.listeners
+
+import gui.Drawer
 import com.mxgraph.swing.mxGraphComponent
 import java.awt.event.KeyEvent
 import java.awt.event.MouseAdapter

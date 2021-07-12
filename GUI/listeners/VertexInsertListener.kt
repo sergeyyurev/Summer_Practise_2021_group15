@@ -1,4 +1,8 @@
+package gui.listeners
+
 import com.mxgraph.swing.mxGraphComponent
+import gui.Drawer
+import gui.listeners.DrawerMouseAction
 import java.awt.event.MouseEvent
 
 class VertexInsertListener(drawer: Drawer, component: mxGraphComponent) : DrawerMouseAction(drawer, component) {
@@ -23,7 +27,5 @@ class VertexInsertListener(drawer: Drawer, component: mxGraphComponent) : Drawer
         } finally {
             drawer.graph.model.endUpdate()
         }
-
-        // TODO("Interact with AlgState")
     }
 }
