@@ -35,19 +35,6 @@ class GraphOriented<T>()
             if (adjacencyMap[sourceVertex]!!.contains(destinationVertex))
             {
                 adjacencyMap[sourceVertex]!!.remove(destinationVertex)
-                if (adjacencyMap[sourceVertex]!!.isEmpty())
-                {
-                    adjacencyMap.remove(sourceVertex)
-                    nodes.remove(sourceVertex)
-                }
-            }
-        }
-        if (adjacencyMap.containsKey(destinationVertex))
-        {
-            if (adjacencyMap[destinationVertex]!!.isEmpty())
-            {
-                adjacencyMap.remove(destinationVertex)
-                nodes.remove(destinationVertex)
             }
         }
     }

@@ -22,9 +22,11 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
     private var nodesOrder : List<T> = emptyList<T>()
     private var connectComponents : MutableList<MutableList<T>> = mutableListOf<MutableList<T>>()
     var logs : String = String()
+    // String and not observer, because it's necessary to save and restore logs
 
     private var history : Stack<AlgState<T>> = mutableListOf<AlgState<T>>()
 
+    // Class for memento pattern, can be used in this class only
     private class AlgState<T>(val currentStage : CurrentStage = CurrentStage.INITIALISATION,
                               val graph : GraphOriented<T> = GraphOriented(),
                               val searchStack : Stack<T> = mutableListOf<T>(),
@@ -32,9 +34,6 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
                               val nodesOrder : List<T> = emptyList<T>(),
                               var connectComponents : MutableList<MutableList<T>> = mutableListOf<MutableList<T>>(),
                               var logs : String = String())
-    {   
-        
-    }
 
     fun refresh()
     {
@@ -61,6 +60,8 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
         graph.addEdge(sourceVertex, destinationVertex)
     }
 
+    // remove * can be done at initialisation state only -- otherwise it can damage agorithm 
+
     fun removeNode(vertex : T)
     {
         if (currentStage == CurrentStage.INITIALISATION)
@@ -76,6 +77,8 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
             graph.removeEdge(sourceVertex, destinationVertex)
         }
     }
+
+    // Front end getters
 
     fun getEdges() : List<Pair<T,T>>
     {
@@ -133,6 +136,7 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
 
     private fun save()
     {
+        // The copy methodes created because Kotlin uses links by default
         history.push(AlgState<T>( currentStage = this.currentStage,
                                   graph = this.graph.copy(),
                                   searchStack = this.searchStack.toMutableList(),
@@ -183,10 +187,31 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
         return result
     }
 
+    fun addNodesNeighboursInStack(currentNode : T)
+    {
+        logs += ("The node isn't handeled yet\n")
+        handeledNodes.add(currentNode)
+        if (graph.adjacencyMap[currentNode] == null)
+        {
+            logs += ("No nodes to add to the stack\n")
+            return
+        }
+
+        for (node in graph.adjacencyMap[currentNode]!!)
+        {
+            if (node !in handeledNodes)
+            {
+                logs += ("Adding node $node to the stack\n")
+                searchStack.push(node)
+            }
+        }
+    }
+
     fun doAlgStep()
     {
+        println(toString())
+        logs += "\n"    
         this.save()        
-        logs += "\n"
         when (currentStage)
         {
             CurrentStage.INITIALISATION -> 
@@ -197,15 +222,14 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
                     currentStage = CurrentStage.COMPLETED
                     return
                 }
+                
+                refresh()
 
-                nodesOrder = graph.nodes.toList()
-                searchStack.add(nodesOrder[0])
-                handeledNodes.clear()
                 currentStage = CurrentStage.REVERSE_GRAPH_DFS
+                searchStack.add(graph.nodes.first())
                 logs += ("Go to the next stage\nReverse graph DFS\n")
                 logs += ("Inversing graph...\n")
-                graph = graph.inversed()
-                nodesOrder = emptyList()
+                graph = graph.inversed()    
                 connectComponents.add(mutableListOf<T>())
                 return
             }
@@ -216,25 +240,10 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
                 {
                     val currentNode = searchStack.peek()
                     logs += ("Handeling node $currentNode\n")
-                
+
                     if (currentNode !in handeledNodes)
                     {
-                        logs += ("The node isn't handeled yet\n")
-                        handeledNodes.add(currentNode)
-                        if (graph.adjacencyMap[currentNode] == null)
-                        {
-                            logs += ("No nodes to add to the stack\n")
-                            return
-                        }
-
-                        for (node in graph.adjacencyMap[currentNode]!!)
-                        {
-                            if (node !in handeledNodes)
-                            {
-                                logs += ("Adding node $node to the stack\n")
-                                searchStack.push(node)
-                            }
-                        }
+                        addNodesNeighboursInStack(currentNode)
                     }
 
                     else
@@ -289,21 +298,7 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
                     
                     if (currentNode !in handeledNodes)
                     {
-                        logs += ("The node isn't handeled yet\n")
-                        handeledNodes.add(currentNode)
-                        if (graph.adjacencyMap[currentNode] == null)
-                        {
-                            logs += ("No nodes to add to the stack\n")
-                            return
-                        }
-                        for (node in graph.adjacencyMap[currentNode]!!)
-                        {
-                            if (node !in handeledNodes)
-                            {
-                                logs += ("Adding node $node to the stack\n")
-                                searchStack.push(node)
-                            }
-                        }
+                        addNodesNeighboursInStack(currentNode)
                     }
 
                     else
@@ -354,7 +349,6 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
                 logs += ("The algorithm is complete and the components are ${connectComponentsToString()}")
                 return
             } 
-            
         }
     }
 
@@ -367,43 +361,3 @@ class AlgHandler<T>(private var graph : GraphOriented<T> = GraphOriented())
     }
 }
 
-fun main()
-{
-     //---------------------------------------
-//     val scan = java.util.Scanner(System.`in`)
-//     var c = ""
-//     var d = ""
-//     var enteredList: MutableList<Pair<String, String>> = mutableListOf()
-
-//     while(scan.hasNext()){
-//         c = scan.nextLine()
-
-//         if(scan.hasNext()){
-//             d = scan.nextLine()
-
-//             enteredList.add(Pair(c, d))            
-//         }
-//         else
-//             break
-//     }
-     //---------------------------------------------
-
-    var algHandler = AlgHandler<String>()
-    algHandler.addEdge("a", "b")
-    algHandler.addEdge("b", "a")
-    algHandler.addEdge("a", "c")
-    algHandler.addEdge("c", "a")
-    algHandler.addEdge("b", "c")
-    algHandler.addEdge("c", "b")
-    algHandler.addEdge("c", "d")
-    
-
-    algHandler.removeNode("a")
-    println(algHandler.toString())
-    println(algHandler.getNodes().toString())
-
-    // algHandler.doAlgUntilCompleted()
-    // println("Print alg result")
-    // val res = algHandler.connectComponentsToString()
-    // println("$res")
-}
